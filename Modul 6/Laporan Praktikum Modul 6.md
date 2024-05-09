@@ -16,7 +16,9 @@ List adalah sekumpulan data sejenis yang berada dalam lokasi yang fleksibel
 a. Single Linked List
 Single linked list merupukan struktur data yang terdiri dari sejumlah node yang dihubungkan melalui pointer. Single linked list memiliki dua komponen utama di dalamnya yaitu Data dan Pointer yang menuju ke node berikutnya. 
 
-Gambarrrr.....
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/SingleLinkedList.png" alt="Alt Text">
+</p>
 
 - Node pertama (head) menunjuk pada node yang pertama yang disebut dengan head.
 - Node terakhir memiliki pointer yang menunjuk ke NULL yang merupakan akhir dari linked list.
@@ -28,12 +30,16 @@ Gambarrrr.....
   Linked List Circular
   Linked List Circular tidak memiliki nilai akhir, hal ini dikarenakan pada list di node terakhir tidak bernilai NULL, namun node terakhir terhubung dengan node pertama (head). Linked List Circular biasanya digunakan untuk menyimpan data yang dapat diakses dengan berulang-ulang sehingga memudahkan penggunanya.
 
-  Gambarrr..... 
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/Circular.png" alt="Alt Text">
+</p> 
 
 b. Double Linked List
 Double Linked List merupakan sebuah struktur data yang memiliki tambahan satu pointer pada setiap simpulnya. Hal ini memungkinkan Double Linked List untuk melakukan operasi penghapusan dan penambahan pada semua simpul dengan lebih mudah dan efisien. Double Linked List memiliki tiga elemen penting yaitu data, pointer next (menunjuk ke simpul berikutnya), dan pointer prev (menunjuk ke simpul sebelumnya). Double Linked List biasanya digunakan pada web browser untuk navigasi maju dan mundur halaman web. Berbagai aplikasi yang menyediakan fitur undo dan redo, Cance LRU atau MRU yang menggunakan Double Linked List.
 
-Gambar......
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/DoubleLinkedList.png" alt="Alt Text">
+</p>
 
 ## Guided 
 
@@ -298,46 +304,375 @@ int main(){
 #### Bagian 1
 
 ```C++
-
+#include <iostream>
+using namespace std;
 ```
 
-
+Kode di atas digunakan agar dapat membuat operasi input dan output pada program C++, pada namespace std digunakan agar dalam membuat fungsi tidak perlu menuliskan std lagi.
 
 #### Bagian 2
 
 ```C++
-
+struct Node{
+    int data;
+    Node *next;
+};
 ```
 
-
+Struktur node terdiri dari dua anggota yaitu data yang dapat menyimpan elemen serta next yang menjadi pointer ke node berikutnya.
 
 #### Bagian 3
 
 ```C++
+Node *head;
+Node *tail;
 
+void init(){
+    head = NULL;
+    tail = NULL;
+}
 ```
 
+head dan tail sebagai variabel global untuk menunjuk node pertama dan terakhir. Keduanya menjadi NULL yang menginisiasi list kosong.
 
-#### Output :
+#### Bagian 4
 
 ```C++
+bool isEmpty(){
+    return (head == NULL);
+}
+void insertDepan(int nilai){
+    Node *baru = new Node;
+    baru->data = nilai;
+    baru->next = NULL;
+    if (isEmpty()){
+        head = tail = baru;
+    }
+    else{
+        baru->next = head;
+        head = baru;
+    }
+}
+```
+
+Mengembalikan true jia linked list kosong dan false jika berisi value. Pada kode berikutnya digunakan untuk menambahkan node baru di depan linked list dengan nilai.
+
+#### Bagian 5
+
+```C++
+void insertBelakang(int nilai){
+    Node *baru = new Node;
+    baru->data = nilai;
+    baru->next = NULL;
+    if (isEmpty()){
+        head = tail = baru;
+    }
+    else{
+        tail->next = baru;
+        tail = baru;
+    }
+}
+```
+
+Kode di atas digunakan untuk menambahkan sebuah node baru di belakang linked list.
+
+#### Bagian 6
+
+```C++
+int hitungList(){
+    Node *hitung = head;
+    int jumlah = 0;
+    while (hitung != NULL){
+        jumlah++;
+        hitung = hitung->next;
+    }
+    return jumlah;
+}
+```
+
+Kode di atas digunakan untuk menghitung jumlah node dalam linked list.
+
+#### Bagian 7
+
+```C++
+void insertTengah(int data, int posisi){
+    if (posisi < 1 || posisi > hitungList()){
+        cout << "Posisi diluar jangkauan" << endl;
+    }
+    else if (posisi == 1){
+        cout << "Posisi bukan posisi tengah" << endl;
+    }
+    else{
+        Node *baru = new Node();
+        baru->data = data;
+        Node *bantu = head;
+        int nomor = 1;
+        while (nomor < posisi - 1){
+            bantu = bantu->next;
+            nomor++;
+        }
+        baru->next = bantu->next;
+        bantu->next = baru;
+    }
+}
+```
+
+Menambahkan node baru yang ada di posisi tengah linked list dengan nilai 'data' dan pada posisinya.
+
+#### Bagian 8
+
+```C++
+void hapusDepan() {
+    if (!isEmpty()){
+        Node *hapus = head;
+        if (head->next != NULL){
+            head = head->next;
+        }
+        else{
+            head = tail = NULL;
+        }
+        delete hapus;.
+    }
+    else{
+        cout << "List kosong!" << endl;
+    }
+}
+```
+
+Kode di atas ini digunakan untuk menghapus nilai depan linked list.
+
+#### Bagian 9
+
+```C++
+void hapusBelakang() {
+    if (!isEmpty()){
+        Node *hapus = tail;
+        if (head != tail){
+            Node *bantu = head;
+            while (bantu->next != tail){
+                bantu = bantu->next;
+            }
+            tail = bantu;
+            tail->next = NULL;
+        }
+        else{
+            head = tail = NULL;
+        }
+        delete hapus;
+    }
+    else{
+        cout << "List kosong!" << endl;
+    }
+}
 
 ```
 
-**Penjelasan:**
+Kode di atas ini digunakan untuk menghapus nilai belakang linked list.
 
+#### Bagian 10
+
+```C++
+void hapusTengah(int posisi){
+    if (posisi < 1 || posisi > hitungList()){
+        cout << "Posisi di luar jangkauan" << endl;
+    }
+    else if (posisi == 1){
+        cout << "Posisi bukan posisi tengah" << endl;
+    }
+    else{
+        int nomor = 1;
+        Node *bantu = head;
+        Node *hapus;
+        while (nomor <= posisi){
+            if (nomor == posisi - 1){
+                hapus = bantu->next;
+            }
+            if (nomor == posisi){
+                bantu->next = bantu->next->next;
+            }
+            bantu = bantu->next;
+            nomor++;
+        }
+        delete hapus;
+    }
+}
+```
+
+Kode di atas ini digunakan untuk menghapus nilai tengah linked list.
+
+#### Bagian 11
+
+```C++
+void ubahDepan(int data){
+    if (!isEmpty()){
+        head->data = data;
+    }
+    else{
+        cout << "List masih kosong!" << endl;
+    }
+}
+
+void ubahTengah(int data, int posisi){
+    if (!isEmpty()){
+        if (posisi < 1 || posisi > hitungList()){
+            cout << "Posisi di luar jangkauan" << endl;
+        }
+        else if (posisi == 1){
+            cout << "Posisi bukan posisi tengah" << endl;
+        }
+        else{
+            Node *bantu = head;
+            int nomor = 1;
+            while (nomor < posisi){
+                bantu = bantu->next;
+                nomor++;
+            }
+            bantu->data = data;
+        }
+    }
+    else{
+        cout << "List masih kosong!" << endl;
+    }
+}
+void ubahBelakang(int data){
+    if (!isEmpty()){
+        tail->data = data;
+    }
+    else{
+        cout << "List masih kosong!" << endl;
+    }
+}
+
+```
+
+Terdapat tiga fungsi pada kode di atas, yaitu fungsi untuk mengubah nilai data dari node yang berada di tengah linked list,mengubah data node pertama dalam linked list, dan node paling belakang.
+
+#### Bagian 12
+
+```C++
+void clearList(){
+    Node *bantu, *hapus;
+    bantu = head;
+    while (bantu != NULL){
+        hapus = bantu;
+        bantu = bantu->next;
+        delete hapus;
+    }
+    head = tail = NULL;
+    cout << "List berhasil terhapus!" << endl;
+}
+```
+
+Fungsi di atas digunakan untuk menghapus semua node yang ada di dalam linked list serta mengembalikan linked list ke dalam kondisi awa (NULL) atau kosong.
+
+#### Bagian 13
+
+```C++
+Node *head;
+Node *tail;
+
+void init(){
+    head = NULL;
+    tail = NULL;
+}
+```
+
+head dan tail sebagai variabel global untuk menunjuk node pertama dan terakhir. Keduanya menjadi NULL yang menginisiasi list kosong.
+
+#### Bagian 13
+
+```C++
+void tampil(){
+    Node *bantu = head;
+    if (!isEmpty()){
+        while (bantu != NULL){
+            cout << bantu->data << " ";
+            bantu = bantu->next;
+        }
+        cout << endl;
+    }
+    else{
+        cout << "List masih kosong!" << endl;
+    }
+}
+```
+
+Memunculkan isi dari linked list yang masih ada di dalamnya, jika tidak ada maka akan kosong.
+
+#### Bagian 13
+
+```C++
+int main(){
+    init(); // Inisialisasi linked list
+
+    // Menambahkan beberapa node ke linked list dan menampilkan isi setiap kali dilakukan operasi
+    insertDepan(3);
+    tampil();
+    insertBelakang(5);
+    tampil();
+    insertDepan(2);
+    tampil();
+    insertDepan(1);
+    tampil();
+
+    // Menghapus node pertama dan terakhir dari linked list dan menampilkan isi setiap kali dilakukan operasi
+    hapusDepan();
+    tampil();
+    hapusBelakang();
+    tampil();
+
+    // Menambahkan node di posisi tengah, kemudian menghapusnya, dan menampilkan isi setiap kali dilakukan operasi
+    insertTengah(7, 2);
+    tampil();
+    hapusTengah(2);
+    tampil();
+
+    // Mengubah nilai node pertama, terakhir, dan di posisi tengah, kemudian menampilkan isi setiap kali dilakukan operasi
+    ubahDepan(1);
+    tampil();
+    ubahBelakang(8);
+    tampil();
+    ubahTengah(11, 2);
+    tampil();
+
+    // Menambahkan node baru di posisi tengah dan menampilkan isi linked list akhir
+    insertTengah(7, 1);
+    tampil();
+
+    return 0;
+}
+```
+
+Fungsi main atau fungsi utama ini merupakan fungsi yang pertama kali akan dieksekusi dalam progrm. Pada main terdapat berbagai fungsi yang telah dibuat sebelumnya sehingga pada main hanya tinggal mengatur saja posisi fungsi yang telah di buat.
 
 #### Full Code Screenshot
 
 <p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/codeguided1.png" alt="Alt Text">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G1.1.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G1.2.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G1.3.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G1.4.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G1.5.png" alt="Alt Text">
 </p>
 
 #### Screenshot Output
 
 <p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/OutG1.png" alt="Alt Text">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/OGuid1.png" alt="Alt Text">
 </p>
+
+#### Penjelasan
+
+Dari hasil output di atas, menyatakan bahwa posisi yang dipilih bukan merupakan posisi tengah, hal ini sudah ada pada setiap fungsi di dalam kode. Fungsi main yang mengatur segalaa output dari kode.
+
 
 ### 2. Guided 2
 
@@ -548,13 +883,13 @@ Sesuai dengan fungsi main, output di atas urutannya telah di atur dalam fungsi m
 #### Full Code Screenshot
 
 <p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/codeguided2.png" alt="Alt Text">
+  <img src="" alt="Alt Text">
 </p>
 
 #### Screenshot Output
 
 <p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/OutG2.png" alt="Alt Text">
+  <img src="" alt="Alt Text">
 </p>
 
 ## Unguided 
@@ -815,10 +1150,7 @@ Pada output di atas, pengguna memasukkan value yang berbeda dari 5 buku. Mulai d
 #### Screenshot Output
 
 <p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/OutPart1.png" alt="Alt Text">
-</p>
-<p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/OutPart2.png" alt="Alt Text">
+  <img src="" alt="Alt Text">
 </p>
 
 NB : Screenshot terlalu panjang, oleh karena itu screenshot dibagi menjadi dua bagian.
@@ -843,8 +1175,6 @@ Dalam bahasa pemrograman C++, struct dapat mempermudah dan memungkinkan programe
 ## Referensi
 
 
-[1]	C. W. SItorus, “PENERAPAN DAN FUNGSI ALGORITMA PEMROGRAMAN,” Вестник Росздравнадзора, vol. 4, no. 1, pp. 9–15, 2017.
-
 [2]	A. Aliyanto, S. Utomo, and S. Santosa, “Sistem Pembelajaran Algoritma Stack Dan Queue Dengan Pendekatan Program Based Learning,” J. Teknol. Inf., vol. 7, no. 1, pp. 17–18, 2011.
 
-[3]	L. J. E. Dewi, “MEDIA PEMBELAJARAN BAHASA PEMROGRAMAN C++,” Rev. Bras. Linguística Apl., vol. 5, no. 1, pp. 1689–1699, 2016, [Online].
+
