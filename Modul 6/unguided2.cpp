@@ -1,3 +1,6 @@
+// Rizal Wahyu Pratama
+// 2311110029
+
 #include <iostream>
 #include <iomanip>
 
