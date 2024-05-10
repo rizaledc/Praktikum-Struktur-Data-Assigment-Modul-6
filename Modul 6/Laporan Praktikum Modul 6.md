@@ -579,7 +579,7 @@ void init(){
 
 head dan tail sebagai variabel global untuk menunjuk node pertama dan terakhir. Keduanya menjadi NULL yang menginisiasi list kosong.
 
-#### Bagian 13
+#### Bagian 14
 
 ```C++
 void tampil(){
@@ -599,7 +599,7 @@ void tampil(){
 
 Memunculkan isi dari linked list yang masih ada di dalamnya, jika tidak ada maka akan kosong.
 
-#### Bagian 13
+#### Bagian 15
 
 ```C++
 int main(){
@@ -676,83 +676,223 @@ Dari hasil output di atas, menyatakan bahwa posisi yang dipilih bukan merupakan 
 
 ### 2. Guided 2
 
-#### Buatlah sebuah struktur dengan skema seperti dibawah, isi dengan nilai kemudian jalankan. 
+#### Double Linked List 
 
 ```C++
+// Rizal Wahyu Pratama
+// 2311110029
+
 #include <iostream>
-#include <string>
+#include <iomanip>
+
 using namespace std;
 
-struct hewan {
-    string nama_hewan;
-    string jenis_kelamin;
-    string kembangbiak;
-    string pernafasan;
-    string tempat_hidup;
-    bool karnivora;
-}; 
-
-struct hewan_darat{
-    hewan info_hewan;
-    int jumlah_kaki;
-    bool apakah_menyusui;
-    string suara;
+struct Node {
+    string nama_produk;
+    int harga;
+    Node* prev;
+    Node* next;
 };
-hewan_darat hewan1;
 
-struct hewan_laut{
-    hewan info_hewan;
-    string bentuk_sirip;
-    string pertahanan_diri;
+class LinkedList {
+private:
+    Node* head;
+    Node* tail;
+public:
+    LinkedList() {
+        head = NULL;
+        tail = NULL;
+    }
+    void tambahData(string nama_produk, int harga) {
+        Node* newNode = new Node;
+        newNode->nama_produk = nama_produk;
+        newNode->harga = harga;
+        newNode->prev = NULL;
+        newNode->next = NULL;
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        }
+        else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+    }
+    void hapusData(string nama_produk) {
+        Node* currentNode = head;
+        while (currentNode != NULL) {
+            if (currentNode->nama_produk == nama_produk) {
+                if (currentNode == head) {
+                    head = head->next;
+                    head->prev = NULL;
+                }
+                else if (currentNode == tail) {
+                    tail = tail->prev;
+                    tail->next = NULL;
+                }
+                else {
+                    currentNode->prev->next = currentNode->next;
+                    currentNode->next->prev = currentNode->prev;
+                }
+                delete currentNode;
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+    }
+    void updateData(string nama_produk, string new_nama_produk, int new_harga) {
+        Node* currentNode = head;
+        while (currentNode != NULL) {
+            if (currentNode->nama_produk == nama_produk) {
+                currentNode->nama_produk = new_nama_produk;
+                currentNode->harga = new_harga;
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+    }
+    void tambahDataUrutan(string nama_produk, int harga, int urutan) {
+        Node* newNode = new Node;
+        newNode->nama_produk = nama_produk;
+        newNode->harga = harga;
+        newNode->prev = NULL;
+        newNode->next = NULL;
+        if (urutan == 1) {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+        else {
+            Node* currentNode = head;
+            int i = 1;
+            while (i < urutan - 1) {
+                currentNode = currentNode->next;
+                i++;
+            }
+            newNode->prev = currentNode;
+            newNode->next = currentNode->next;
+            currentNode->next->prev = newNode;
+            currentNode->next = newNode;
+        }
+    }
+    void hapusDataUrutan(int urutan) {
+        if (urutan == 1) {
+            head = head->next;
+            head->prev = NULL;
+        }
+        else {
+            Node* currentNode = head;
+            int i = 1;
+            while (i < urutan) {
+                currentNode = currentNode->next;
+                i++;
+            }
+            if (currentNode == tail) {
+                tail = tail->prev;
+                tail->next = NULL;
+            }
+            else {
+                currentNode->prev->next = currentNode->next;
+                currentNode->next->prev = currentNode->prev;
+            }
+        }
+    }
+    void hapusSeluruhData() {
+        while (head != NULL) {
+            Node* currentNode = head;
+            head = head->next;
+            delete currentNode;
+        }
+        tail = NULL;
+    } // <-- add closing bracket here
+
+
+    void tampilkanData() {
+        Node* currentNode = head;
+        cout << setw(15) <<left<< "Nama Produk" << setw(10)<<"Harga"<< endl;
+        while (currentNode != NULL) {
+            cout <<  setw(15) << left <<  currentNode->nama_produk << setw(10) << currentNode->harga << endl;
+            currentNode = currentNode->next;
+        }
+    }
+    void tampilkanMenu() {
+        int pilihan, harga, urutan;
+        string nama_produk, new_nama_produk;
+        cout << "Toko Skincare Purwokerto" << endl;
+        cout << "1. Tambah Data" << endl;
+        cout << "2. Hapus Data" << endl;
+        cout << "3. Update Data" << endl;
+        cout << "4. Tambah Data Urutan Tertentu" << endl;
+        cout << "5. Hapus Data Urutan Tertentu" << endl;
+        cout << "6. Hapus Seluruh Data" << endl;
+        cout << "7. Tampilkan Data" << endl;
+        cout << "8. Exit" << endl;
+        do {
+            cout << "Pilih menu: ";
+            cin >> pilihan;
+            switch (pilihan) {
+            case 1:
+                cout << "Masukkan Nama Produk: ";
+                cin >> nama_produk;
+                cout << "Masukkan Harga: ";
+                cin >> harga;
+                tambahData(nama_produk, harga);
+                break;
+            case 2:
+                cout << "Masukkan Nama Produk yang akan dihapus: ";
+                cin >> nama_produk;
+                hapusData(nama_produk);
+                break;
+            case 3:
+                cout << "Masukkan Nama Produk yang akan diupdate: ";
+                cin >> nama_produk;
+                cout << "Masukkan Nama Produk baru: ";
+                cin >> new_nama_produk;
+                cout << "Masukkan Harga baru: ";
+                cin >> harga;
+                updateData(nama_produk, new_nama_produk, harga);
+                break;
+            case 4:
+                cout << "Masukkan Nama Produk: ";
+                cin >> nama_produk;
+                cout << "Masukkan Harga: ";
+                cin >> harga;
+                cout << "Masukkan Urutan: ";
+                cin >> urutan;
+                tambahDataUrutan(nama_produk, harga, urutan);
+                break;
+            case 5:
+                cout << "Masukkan Urutan: ";
+                cin >> urutan;
+                hapusDataUrutan(urutan);
+                break;
+            case 6:
+                hapusSeluruhData();
+                break;
+            case 7:
+                tampilkanData();
+                break;
+            case 8:
+                cout << "Terima kasih." << endl;
+                break;
+            default:
+                cout << "Pilihan tidak tersedia." << endl;
+            }
+        } while (pilihan != 8);
+    }
 };
-hewan_laut hewan2;
 
 int main() {
-    hewan1.info_hewan.nama_hewan = "Anjing";
-    hewan1.info_hewan.jenis_kelamin = "Laki-laki";
-    hewan1.info_hewan.kembangbiak = "Melahirkan";
-    hewan1.info_hewan.pernafasan = "Paru paru";
-    hewan1.info_hewan.tempat_hidup = "Darat";
-    hewan1.info_hewan.karnivora = true;
-    hewan1.jumlah_kaki = 4;
-    hewan1.apakah_menyusui = true;   
-    hewan1.suara = "Rawrr, guk, guk,guk";
-    
-    hewan2.info_hewan.nama_hewan = "Paus";
-    hewan2.info_hewan.jenis_kelamin = "Perempuan";
-    hewan2.info_hewan.kembangbiak = "Melahirkan";
-    hewan2.info_hewan.pernafasan = "paru paru";
-    hewan2.info_hewan.tempat_hidup = "Perairan (Laut)";
-    hewan2.info_hewan.karnivora = false;
-    hewan2.bentuk_sirip = "dosal, sabit, dan gumpalan";
-    hewan2.pertahanan_diri = " Menghirup Oksigen di udara";   
-
-	//menampilkan data 
-	cout << "\t Hewan Darat" << endl;
-	cout << "Nama Hewan :" <<hewan1.info_hewan.nama_hewan << endl;
-	cout << "Jenis Kelamin : "<<hewan1.info_hewan.jenis_kelamin << endl;
-	cout << "Kembangbiak : "<< hewan1.info_hewan.kembangbiak << endl;
-	cout << "Pernapasan : "<< hewan1.info_hewan.pernafasan << endl;
-	cout << "Tempat Hidup : "<< hewan1.info_hewan.tempat_hidup << endl;
-	cout << "karnivora : "<< hewan1.info_hewan.karnivora << endl;
-	cout << "jumlah kaki : "<< hewan1.jumlah_kaki << endl;
-	cout << "apakah menyusui?  : "<< hewan1.apakah_menyusui << endl;
-	cout << "suara : "<< hewan1.suara << "\n" << endl ;
-
-	//menampilkan data 
-	cout << "\t Hewan Laut" << endl;
-	cout << "Nama Hewan :" <<hewan2.info_hewan.nama_hewan << endl;
-	cout << "Jenis Kelamin : "<<hewan2.info_hewan.jenis_kelamin << endl;
-	cout << "Kembangbiak : "<< hewan2.info_hewan.kembangbiak << endl;
-	cout << "Pernapasan : "<< hewan2.info_hewan.pernafasan << endl;
-	cout << "Tempat Hidup : "<< hewan2.info_hewan.tempat_hidup << endl;
-	cout << "apakah karnivora? "<< hewan2.info_hewan.karnivora << endl;
-	cout << "bentuk sirip : "<< hewan2.bentuk_sirip << endl;
-	cout << "pertahanan diri : "<< hewan2.pertahanan_diri << endl;
-
-
-	return 0;
-	}
+    LinkedList list;
+    list.tambahData ("Originote",60000);
+    list.tambahData ("Somethinc",150000);
+    list.tambahData ("Skintific",100000);
+    list.tambahData ("Wardah"   ,50000);
+    list.tambahData ("Hanasui"  ,30000);
+    list.tampilkanMenu();
+    return 0;
+}
 ```
 
 **Penjelasan:**
@@ -761,202 +901,455 @@ int main() {
 
 ```C++
 #include <iostream>
-#include <string>
+#include <iomanip>
 
 using namespace std;
 ```
 
-Library iostream digunakan untuk menjalankan operasi input dan output pada program. Library string digunakan untuk memanipulasi dan mengolah data string. Lalu namespace std dipanggil agar saat penulisan fungsi tidak perlu ditambahkan std lagi.
+Library iostream digunakan untuk menjalankan operasi input dan output pada program dan iomanip digunakan untuk memanipulasi lebar kolom. Lalu namespace std dipanggil agar saat penulisan fungsi tidak perlu ditambahkan std lagi.
 
 #### Bagian 2
 
 ```C++
-struct hewan {
-    string nama_hewan;
-    string jenis_kelamin;
-    string kembangbiak;
-    string pernafasan;
-    string tempat_hidup;
-    bool karnivora;
-}; 
-
-struct hewan_darat{
-    hewan info_hewan;
-    int jumlah_kaki;
-    bool apakah_menyusui;
-    string suara;
+struct Node {
+    string nama_produk;
+    int harga;
+    Node* prev;
+    Node* next;
 };
-hewan_darat hewan1;
-
-struct hewan_laut{
-    hewan info_hewan;
-    string bentuk_sirip;
-    string pertahanan_diri;
-};
-hewan_laut hewan2;
 ```
 
-Pada kode di atas, didefinisikan 3 buah struct. Dimana struct yang pertama yaitu struct hewan yang merupakan struct inti dari dua struct setelahnya. Di dalam struct ini didefinisikan 5 variabel yang akan diisi dengan valuenya masing-masing. Berikutnya terdapat 2 struct turunan dari struct hewan yaitu struct hewan_darat dan struct hewan_laut sebagai tambahan informasi dari masing-masing jenis hewan.
+Kode mendeklarasikan struktur node dimana terdapat dua variabel yaitu nama_produk dan harga. Serta terdapat dua pointer prev dan next yang menunjuk ke node sebelumnya dan berikutnya.
 
 #### Bagian 3
 
 ```C++
-int main() {
-    hewan1.info_hewan.nama_hewan = "Anjing";
-    hewan1.info_hewan.jenis_kelamin = "Laki-laki";
-    hewan1.info_hewan.kembangbiak = "Melahirkan";
-    hewan1.info_hewan.pernafasan = "Paru paru";
-    hewan1.info_hewan.tempat_hidup = "Darat";
-    hewan1.info_hewan.karnivora = true;
-    hewan1.jumlah_kaki = 4;
-    hewan1.apakah_menyusui = true;   
-    hewan1.suara = "Rawrr, guk, guk,guk";
-    
-    hewan2.info_hewan.nama_hewan = "Paus";
-    hewan2.info_hewan.jenis_kelamin = "Perempuan";
-    hewan2.info_hewan.kembangbiak = "Melahirkan";
-    hewan2.info_hewan.pernafasan = "paru paru";
-    hewan2.info_hewan.tempat_hidup = "Perairan (Laut)";
-    hewan2.info_hewan.karnivora = false;
-    hewan2.bentuk_sirip = "dosal, sabit, dan gumpalan";
-    hewan2.pertahanan_diri = " Menghirup Oksigen di udara";   
-
-	//menampilkan data 
-	cout << "\t Hewan Darat" << endl;
-	cout << "Nama Hewan :" <<hewan1.info_hewan.nama_hewan << endl;
-	cout << "Jenis Kelamin : "<<hewan1.info_hewan.jenis_kelamin << endl;
-	cout << "Kembangbiak : "<< hewan1.info_hewan.kembangbiak << endl;
-	cout << "Pernapasan : "<< hewan1.info_hewan.pernafasan << endl;
-	cout << "Tempat Hidup : "<< hewan1.info_hewan.tempat_hidup << endl;
-	cout << "karnivora : "<< hewan1.info_hewan.karnivora << endl;
-	cout << "jumlah kaki : "<< hewan1.jumlah_kaki << endl;
-	cout << "apakah menyusui?  : "<< hewan1.apakah_menyusui << endl;
-	cout << "suara : "<< hewan1.suara << "\n" << endl ;
-
-	//menampilkan data 
-	cout << "\t Hewan Laut" << endl;
-	cout << "Nama Hewan :" <<hewan2.info_hewan.nama_hewan << endl;
-	cout << "Jenis Kelamin : "<<hewan2.info_hewan.jenis_kelamin << endl;
-	cout << "Kembangbiak : "<< hewan2.info_hewan.kembangbiak << endl;
-	cout << "Pernapasan : "<< hewan2.info_hewan.pernafasan << endl;
-	cout << "Tempat Hidup : "<< hewan2.info_hewan.tempat_hidup << endl;
-	cout << "apakah karnivora? "<< hewan2.info_hewan.karnivora << endl;
-	cout << "bentuk sirip : "<< hewan2.bentuk_sirip << endl;
-	cout << "pertahanan diri : "<< hewan2.pertahanan_diri << endl;
-
-
-	return 0;
-	}
+class LinkedList {
+private:
+    Node* head;
+    Node* tail;
+public:
+    LinkedList() {
+        head = NULL;
+        tail = NULL;
+    }
+    // Fungsi-fungsi anggota LinkedList
+};
 ```
 
-Fungsi di atas merupakan fungsi main atau fungsi utama dalam pemrograman, fungsi ini akan dieksekusi pertama kali dalam program. Dimana programer akan mengisi masing-masing value dari variabel yang disediakan. Lalu programer akan membuat kode yang berupa output dari value-value yang telah di masukkan. Mulai dari hewan_darat sampai hewan_laut.
+Deklarasi linkedlist sebagai kelas. Dimana LinkedList ini memiliki dua pointer yaitu head dan tail yang menunjuk pada node pertama dan node terakhir dalam linked list.
 
-#### Output:
+#### Bagian 4
 
 ```C++
-Hewan Darat
-Nama Hewan :Anjing
-Jenis Kelamin : Laki-laki
-Kembangbiak : Melahirkan
-Pernapasan : Paru paru
-Tempat Hidup : Darat
-karnivora : 1
-jumlah kaki : 4
-apakah menyusui?  : 1
-suara : Rawrr, guk, guk,guk
-
-         Hewan Laut
-Nama Hewan :Paus
-Jenis Kelamin : Perempuan
-Kembangbiak : Melahirkan
-Pernapasan : paru paru
-Tempat Hidup : Perairan (Laut)
-apakah karnivora? 0
-bentuk sirip : dosal, sabit, dan gumpalan
-pertahanan diri :  Menghirup Oksigen di udara
+void tambahData(string nama_produk, int harga) {
+    // Membuat node baru
+    Node* newNode = new Node;
+    newNode->nama_produk = nama_produk;
+    newNode->harga = harga;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    // Menambahkan node baru ke linked list
+    if (head == NULL) {
+        head = newNode;
+        tail = newNode;
+    }
+    else {
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
+}
 ```
 
-**Penjelasan:**
+Membuat fungsi tambahData() yang dapat menambahkan node baru yang memiliki nama produk dan harga ke akhir linked list. 
 
-Sesuai dengan fungsi main, output di atas urutannya telah di atur dalam fungsi main. Dimana output yang pertama tentunya akan berisi informasi dari jenis hewan darat, berikutnya akan berisi output dari jenis hewan laut. Output ini sesuai dengan value yang dimasukkan oleh programer ke dalam variabelnya.
+#### Bagian 5
+
+```C++
+ void hapusData(string nama_produk) {
+        Node* currentNode = head;
+        while (currentNode != NULL) {
+            if (currentNode->nama_produk == nama_produk) {
+                if (currentNode == head) {
+                    head = head->next;
+                    head->prev = NULL;
+                }
+                else if (currentNode == tail) {
+                    tail = tail->prev;
+                    tail->next = NULL;
+                }
+                else {
+                    currentNode->prev->next = currentNode->next;
+                    currentNode->next->prev = currentNode->prev;
+                }
+                delete currentNode;
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+    }
+    void updateData(string nama_produk, string new_nama_produk, int new_harga) {
+        Node* currentNode = head;
+        while (currentNode != NULL) {
+            if (currentNode->nama_produk == nama_produk) {
+                currentNode->nama_produk = new_nama_produk;
+                currentNode->harga = new_harga;
+                break;
+            }
+            currentNode = currentNode->next;
+        }
+    }
+    void tambahDataUrutan(string nama_produk, int harga, int urutan) {
+        Node* newNode = new Node;
+        newNode->nama_produk = nama_produk;
+        newNode->harga = harga;
+        newNode->prev = NULL;
+        newNode->next = NULL;
+        if (urutan == 1) {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+        else {
+            Node* currentNode = head;
+            int i = 1;
+            while (i < urutan - 1) {
+                currentNode = currentNode->next;
+                i++;
+            }
+            newNode->prev = currentNode;
+            newNode->next = currentNode->next;
+            currentNode->next->prev = newNode;
+            currentNode->next = newNode;
+        }
+    }
+    void hapusDataUrutan(int urutan) {
+        if (urutan == 1) {
+            head = head->next;
+            head->prev = NULL;
+        }
+        else {
+            Node* currentNode = head;
+            int i = 1;
+            while (i < urutan) {
+                currentNode = currentNode->next;
+                i++;
+            }
+            if (currentNode == tail) {
+                tail = tail->prev;
+                tail->next = NULL;
+            }
+            else {
+                currentNode->prev->next = currentNode->next;
+                currentNode->next->prev = currentNode->prev;
+            }
+        }
+    }
+    void hapusSeluruhData() {
+        while (head != NULL) {
+            Node* currentNode = head;
+            head = head->next;
+            delete currentNode;
+        }
+        tail = NULL;
+    } // <-- add closing bracket here
+
+
+    void tampilkanData() {
+        Node* currentNode = head;
+        cout << setw(15) <<left<< "Nama Produk" << setw(10)<<"Harga"<< endl;
+        while (currentNode != NULL) {
+            cout <<  setw(15) << left <<  currentNode->nama_produk << setw(10) << currentNode->harga << endl;
+            currentNode = currentNode->next;
+        }
+    }
+    void tampilkanMenu() {
+        int pilihan, harga, urutan;
+        string nama_produk, new_nama_produk;
+        cout << "Toko Skincare Purwokerto" << endl;
+        cout << "1. Tambah Data" << endl;
+        cout << "2. Hapus Data" << endl;
+        cout << "3. Update Data" << endl;
+        cout << "4. Tambah Data Urutan Tertentu" << endl;
+        cout << "5. Hapus Data Urutan Tertentu" << endl;
+        cout << "6. Hapus Seluruh Data" << endl;
+        cout << "7. Tampilkan Data" << endl;
+        cout << "8. Exit" << endl;
+        do {
+            cout << "Pilih menu: ";
+            cin >> pilihan;
+            switch (pilihan) {
+            case 1:
+                cout << "Masukkan Nama Produk: ";
+                cin >> nama_produk;
+                cout << "Masukkan Harga: ";
+                cin >> harga;
+                tambahData(nama_produk, harga);
+                break;
+            case 2:
+                cout << "Masukkan Nama Produk yang akan dihapus: ";
+                cin >> nama_produk;
+                hapusData(nama_produk);
+                break;
+            case 3:
+                cout << "Masukkan Nama Produk yang akan diupdate: ";
+                cin >> nama_produk;
+                cout << "Masukkan Nama Produk baru: ";
+                cin >> new_nama_produk;
+                cout << "Masukkan Harga baru: ";
+                cin >> harga;
+                updateData(nama_produk, new_nama_produk, harga);
+                break;
+            case 4:
+                cout << "Masukkan Nama Produk: ";
+                cin >> nama_produk;
+                cout << "Masukkan Harga: ";
+                cin >> harga;
+                cout << "Masukkan Urutan: ";
+                cin >> urutan;
+                tambahDataUrutan(nama_produk, harga, urutan);
+                break;
+            case 5:
+                cout << "Masukkan Urutan: ";
+                cin >> urutan;
+                hapusDataUrutan(urutan);
+                break;
+            case 6:
+                hapusSeluruhData();
+                break;
+            case 7:
+                tampilkanData();
+                break;
+            case 8:
+                cout << "Terima kasih." << endl;
+                break;
+            default:
+                cout << "Pilihan tidak tersedia." << endl;
+            }
+        } while (pilihan != 8);
+    }
+};
+```
+
+Terdapat banyak fungsi pada kode di atas seperti fungsi hapusData(), updateData(), tambahDataUrutan(), hapusDataUrutan(), hapusSeluruhData(), tampilkanData(), dan tampilkanMenu(). Fungsi ini dapat melakukan operasi-operasi tambahan pada linked list yang telah dibuat seperti update data, hapus data, menampilkan data, menghapus semua data, dan menampilkan seluruh menu ke pengguna.
+
+#### Bagian 6
+
+```C++
+int main() {
+    LinkedList list;
+    // Menambahkan data awal ke linked list
+    list.tambahData ("Originote",60000);
+    list.tambahData ("Somethinc",150000);
+    list.tambahData ("Skintific",100000);
+    list.tambahData ("Wardah"   ,50000);
+    list.tambahData ("Hanasui"  ,30000);
+    // Menampilkan menu untuk interaksi dengan pengguna
+    list.tampilkanMenu();
+    return 0;
+}
+```
+
+Fungsi di atas merupakan fungsi main atau fungsi inti yang akan pertama kali di eksekusi pada program, dengan adanya fungsi main maka kode dapat berjalan sesuai yang kita inginkan. Di kode ini pengguna kode akan dapat melihat menu yag ada pada program lalu dipilih.
 
 #### Full Code Screenshot
 
 <p align="center">
-  <img src="" alt="Alt Text">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G2.1.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/G2.2.png" alt="Alt Text">
 </p>
 
 #### Screenshot Output
 
 <p align="center">
-  <img src="" alt="Alt Text">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/OGuid2.png" alt="Alt Text">
 </p>
+
+#### Penjelasan
+
+Pada output di atas pengguna akan dapat melihat 6 buah menu yang ada pada program, pengguna diminta untuk memasukkan nomor sesuai dengan pilihannya.
 
 ## Unguided 
 
 ### 1. Unguided 1
 
-#### Modifikasi tugas guided pertama, sehingga setiap item yang terdapat pada struct buku berupa array yang berukuran 5, isi dengan data kemudian tampilkan.
+#### Buatlah program menu Single Linked List Non-Circular untuk menyimpan Nama dan usia mahasiswa, dengan menggunakan inputan dari user.
 
 **Kode Program:**
 
 ```C++
-#include <iostream>
-#include <string>
+// Rizal Wahyu Pratama
+// 2311110029
 
+#include <iostream>
 using namespace std;
 
-const int MAX_BUKU = 5;
-
-struct Buku {
-    string judul_buku;
-    string pengarang;
-    string penerbit;
-    int tebal_buku;
-    double harga_buku;
-    int tahun_terbit;
+// deklarasi struct node
+struct Node {
+    string nama;
+    int usia;
+    Node* next;
 };
 
-// Fungsi untuk memasukkan data buku
-void tambahData(Buku &buku) {
-    cout << "Judul Buku: ";
-    getline(cin, buku.judul_buku);
-    cout << "Pengarang: ";
-    getline(cin, buku.pengarang);
-    cout << "Penerbit: ";
-    getline(cin, buku.penerbit);
-    cout << "Tebal Buku (halaman): ";
-    cin >> buku.tebal_buku;
-    cout << "Harga Buku: ";
-    cin >> buku.harga_buku;
-    cout << "Tahun Terbit: ";
-    cin >> buku.tahun_terbit;
-    cin.ignore(); // Membersihkan buffer input
+// deklarasi head node
+Node* head = NULL;
+
+// fungsi untuk menambahkan node di awal
+void tambahDiAwal(string nama, int usia) {
+    Node* newNode = new Node;
+    newNode->nama = nama;
+    newNode->usia = usia;
+    newNode->next = head;
+    head = newNode;
+}
+
+// fungsi untuk menambahkan node di akhir
+void tambahDiAkhir(string nama, int usia) {
+    Node* newNode = new Node;
+    newNode->nama = nama;
+    newNode->usia = usia;
+    newNode->next = NULL;
+
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+
+    Node* curr = head;
+    while (curr->next != NULL) {
+        curr = curr->next;
+    }
+    curr->next = newNode;
+}
+
+// fungsi untuk menambahkan node di tengah
+void tambahDiTengah(string nama, int usia, int pos) {
+    Node* newNode = new Node;
+    newNode->nama = nama;
+    newNode->usia = usia;
+    newNode->next = NULL;
+
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+
+    Node* curr = head;
+    int i = 1;
+    while (i < pos-1 && curr->next != NULL) {
+        curr = curr->next;
+        i++;
+    }
+    newNode->next = curr->next;
+    curr->next = newNode;
+}
+
+// fungsi untuk menghapus node dengan nama tertentu
+void hapus(string nama) {
+    Node* curr = head;
+    Node* prev = NULL;
+
+    while (curr != NULL && curr->nama != nama) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr == NULL) {
+        cout << "Data tidak ditemukan" << endl;
+        return;
+    }
+
+    if (prev == NULL) {
+        head = curr->next;
+    } else {
+        prev->next = curr->next;
+    }
+
+    delete curr;
+}
+
+// fungsi untuk mengubah data node dengan nama tertentu
+void ubah(string nama, string newNama, int newUsia) {
+    Node* curr = head;
+
+    while (curr != NULL && curr->nama != nama) {
+        curr = curr->next;
+    }
+
+    if (curr == NULL) {
+        cout << "Data tidak ditemukan" << endl;
+        return;
+    }
+
+    curr->nama = newNama;
+    curr->usia = newUsia;
+}
+
+// fungsi untuk menampilkan semua data
+void tampilkan() {
+    if (head == NULL) {
+        cout << "List kosong" << endl;
+        return;
+    }
+
+    Node* curr = head;
+
+    while (curr != NULL) {
+        cout << curr->nama << " " << curr->usia << endl;
+        curr = curr->next;
+    }
 }
 
 int main() {
-    Buku daftar_buku[MAX_BUKU];
+    // memasukkan data pertama (nama dan usia anda)
+    string namaAnda;
+    int usiaAnda;
+    cout << "Masukkan nama anda: ";
+    cin >> namaAnda;
+    cout << "Masukkan usia anda: ";
+    cin >> usiaAnda;
+    tambahDiAwal(namaAnda, usiaAnda);
+    // memasukkan data lainnya
+tambahDiAkhir("John", 19);
+tambahDiAkhir("Jane", 20);
+tambahDiAkhir("Michael", 18);
+tambahDiAkhir("Yusuke", 19);
+tambahDiAkhir("Akechi", 20);
+tambahDiAkhir("Hoshino", 18);
+tambahDiAkhir("Karin", 18);
 
-    // Memasukkan data untuk setiap buku
-    for (int i = 0; i < MAX_BUKU; ++i) {
-        cout << "Masukkan data untuk Buku " << i + 1 << endl;
-        tambahData(daftar_buku[i]);
-        cout << endl;
-    }
+// menampilkan semua data
+cout << "Data awal:" << endl;
+tampilkan();
 
-    // Menampilkan data buku yang telah dimasukkan
-    cout << "Data Buku:"<<endl<<endl;
-    for (int i = 0; i < MAX_BUKU; ++i) {
-        cout << "Daftar Buku ke-" << i + 1 << endl;
-        cout << "Judul: " << daftar_buku[i].judul_buku << endl;
-        cout << "Pengarang: " << daftar_buku[i].pengarang << endl;
-        cout << "Penerbit: " << daftar_buku[i].penerbit << endl;
-        cout << "Tebal Buku: " << daftar_buku[i].tebal_buku << " halaman" << endl;
-        cout << "Harga Buku: Rp" << daftar_buku[i].harga_buku << endl;
-        cout << "Tahun Terbit: " << daftar_buku[i].tahun_terbit << endl << endl;
-    }
+// menghapus data Akechi
+hapus("Akechi");
+cout << endl << "Setelah menghapus Akechi: " << endl;
+tampilkan();
 
-    return 0;
+// menambahkan data Futaba di antara Carol dan Ann
+tambahDiTengah("Futaba", 18, 3);
+cout << endl << "Setelah menambahkan Futaba di antara John dan Jane: " << endl;
+tampilkan();
+
+// menambahkan data Igor di awal
+tambahDiAwal("Igor", 20);
+cout << endl << "Setelah menambahkan Igor di awal: " << endl;
+tampilkan();
+
+// mengubah data Carol menjadi Reyn
+ubah("Michael", "Reyn", 18);
+cout << endl << "Setelah mengubah Michael menjadi Reyn: " << endl;
+tampilkan();
+
+// menampilkan semua data setelah perubahan
+cout << endl << "Data setelah perubahan:" << endl;
+tampilkan();
+
+return 0;
 }
 ```
 
@@ -966,195 +1359,239 @@ int main() {
 
 ```C++
 #include <iostream>
-#include <string>
 
 using namespace std;
 ```
 
-Library iostream digunakan untuk menjalankan operasi input dan output pada program. #include <string> digunakan mengatur string lebih luas dan lebih mudah serta dapat dimanipulasi. Lalu namespace std dipanggil agar saat penulisan fungsi tidak perlu ditambahkan std lagi.
+Library iostream digunakan untuk menjalankan operasi input dan output pada program. Lalu namespace std dipanggil agar saat penulisan fungsi tidak perlu ditambahkan std lagi.
 
 #### Bagian 2
 
 ```C++
-const int MAX_BUKU = 5;
+struct Node {
+    string nama;
+    int usia;
+    Node* next;
+};
 ```
 
-Kode di atas mendeklarasikan konstanta MAX_BUKU yang mengizinkan maksimal buku di input sebanyak 5 buku.
-
+Kode di atas mendeklarasikan struct node yang memperlihatkan semua elemen dalam linked list. Pada node di atas memiliki dua data yaitu nama dan usia serta pointer next yang menunjuk terhadap node selanjutnya.
 
 #### Bagian 3
 
 ```C++
-struct Buku {
-    string judul_buku;
-    string pengarang;
-    string penerbit;
-    int tebal_buku;
-    double harga_buku;
-    int tahun_terbit;
-};
+Node* head = NULL;
+
+void tambahDiAwal(string nama, int usia) {
+    Node* newNode = new Node;
+    newNode->nama = nama;
+    newNode->usia = usia;
+    newNode->next = head;
+    head = newNode;
+}
 ```
 
-Kode di atas mendeklarasikan sebuah struct dengan nama Buku dengan 6 anggotanya tentunya memiliki tipe data yang berbeda-beda. Variabel yang telah dideklarasikan dalam struct ini akan digunakan pada fungsi main dan diberi value oleh pengguna yang memberi inputan.
+Kode di atas mendeklarasikan variabel head sebagai variabel global yang digunakan untuk menyimpan alamat node pertama di dalam linked list. Berikutnya void tambahDiAwal akan digunakan untuk menambahkan node baru di awal list.
 
 
 #### Bagian 4
 
 ```C++
-void tambahData(Buku &buku) {
-    cout << "Judul Buku: ";
-    getline(cin, buku.judul_buku);
-    cout << "Pengarang: ";
-    getline(cin, buku.pengarang);
-    cout << "Penerbit: ";
-    getline(cin, buku.penerbit);
-    cout << "Tebal Buku (halaman): ";
-    cin >> buku.tebal_buku;
-    cout << "Harga Buku: ";
-    cin >> buku.harga_buku;
-    cout << "Tahun Terbit: ";
-    cin >> buku.tahun_terbit;
-    cin.ignore(); // Membersihkan buffer input
+void tambahDiAkhir(string nama, int usia) {
+    Node* newNode = new Node;
+    newNode->nama = nama;
+    newNode->usia = usia;
+    newNode->next = NULL;
+
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+
+    Node* curr = head;
+    while (curr->next != NULL) {
+        curr = curr->next;
+    }
+    curr->next = newNode;
 }
 ```
 
-Kode di atas mendeklarasikan fungsi dengan nama tambahData. Fungsi ini dibuat untuk memasukkan data buku ke dalam struct Buku. Dimana fungsi tambahData ini akan digunakan pada fungsi main untuk menerima inputan dari pengguna program.
+Kode di atas digunakan untuk menambahkan node baru di akhir linked list.
 
 #### Bagian 5
 
 ```C++
-int main() {
-    Buku daftar_buku[MAX_BUKU];
+void tambahDiTengah(string nama, int usia, int pos) {
+    Node* newNode = new Node;
+    newNode->nama = nama;
+    newNode->usia = usia;
+    newNode->next = NULL;
 
-    // Memasukkan data untuk setiap buku
-    for (int i = 0; i < MAX_BUKU; ++i) {
-        cout << "Masukkan data untuk Buku " << i + 1 << endl;
-        tambahData(daftar_buku[i]);
-        cout << endl;
+    if (head == NULL) {
+        head = newNode;
+        return;
     }
 
-    // Menampilkan data buku yang telah dimasukkan
-    cout << "Data Buku:"<<endl<<endl;
-    for (int i = 0; i < MAX_BUKU; ++i) {
-        cout << "Daftar Buku ke-" << i + 1 << endl;
-        cout << "Judul: " << daftar_buku[i].judul_buku << endl;
-        cout << "Pengarang: " << daftar_buku[i].pengarang << endl;
-        cout << "Penerbit: " << daftar_buku[i].penerbit << endl;
-        cout << "Tebal Buku: " << daftar_buku[i].tebal_buku << " halaman" << endl;
-        cout << "Harga Buku: Rp" << daftar_buku[i].harga_buku << endl;
-        cout << "Tahun Terbit: " << daftar_buku[i].tahun_terbit << endl << endl;
+    Node* curr = head;
+    int i = 1;
+    while (i < pos-1 && curr->next != NULL) {
+        curr = curr->next;
+        i++;
     }
-
-    return 0;
+    newNode->next = curr->next;
+    curr->next = newNode;
+}
 ```
 
-Fungsi di atas merupakan fungsi main yang berupa fungsi utama di dalam progran. Fungsi ini akan meminta pengguna untuk memasukkan value dari setiap variabel yang telah dideklarasikan. for (int i = 0; i < MAX_BUKU; ++i) { } digunakan untuk meminta pengguna memasukkan value hingga maksimal 5 buku sesuai batas yang ditetapkan. Pada kode berikutnya, programer membuat ouput yang sesuai dengan value yang dimasukkan oleh pengguna.
+Pada kode di atas, dibuatkan fungsi yang dapat menambahkan node baru di posisi manapun dalam linked list.
 
-
-**Output:**
+#### Bagian 6
 
 ```C++
-Masukkan data untuk Buku 1
-Judul Buku: Perjalanan Menuju Bintang
-Pengarang: Rizal Pratama
-Penerbit: Erlangga
-Tebal Buku (halaman): 172
-Harga Buku: 99000
-Tahun Terbit: 2024
+void hapus(string nama) {
+    Node* curr = head;
+    Node* prev = NULL;
 
-Masukkan data untuk Buku 2
-Judul Buku: Seorang Pria Pencari Kesalahan Wanita
-Pengarang: Wisnu Aji
-Penerbit: Erlangga
-Tebal Buku (halaman): 90
-Harga Buku: 169000
-Tahun Terbit: 2015
+    while (curr != NULL && curr->nama != nama) {
+        prev = curr;
+        curr = curr->next;
+    }
 
-Masukkan data untuk Buku 3
-Judul Buku: Seorang Kristen Pindah Muslim
-Pengarang: Mikhael
-Penerbit: Sinar Dunia
-Tebal Buku (halaman): 800
-Harga Buku: 400000
-Tahun Terbit: 2010
+    if (curr == NULL) {
+        cout << "Data tidak ditemukan" << endl;
+        return;
+    }
 
-Masukkan data untuk Buku 4
-Judul Buku: Perjalanan Menjadi Coach 
-Pengarang: Yoka
-Penerbit: Montoon
-Tebal Buku (halaman): 76
-Harga Buku: 50000
-Tahun Terbit: 2020
+    if (prev == NULL) {
+        head = curr->next;
+    } else {
+        prev->next = curr->next;
+    }
 
-Masukkan data untuk Buku 5
-Judul Buku: Cinta yang Tak Pernah ku Bayangkan
-Pengarang: Fahmi Hidayat
-Penerbit: PLH Entertain
-Tebal Buku (halaman): 200
-Harga Buku: 56000
-Tahun Terbit: 2023
-
-Data Buku:
-
-Daftar Buku ke-1
-Judul: Perjalanan Menuju Bintang
-Pengarang: Rizal Pratama
-Penerbit: Erlangga
-Tebal Buku: 172 halaman
-Harga Buku: Rp99000
-Tahun Terbit: 2024
-
-Daftar Buku ke-2
-Judul: Seorang Pria Pencari Kesalahan Wanita
-Pengarang: Wisnu Aji
-Penerbit: Erlangga
-Tebal Buku: 90 halaman
-Harga Buku: Rp169000
-Tahun Terbit: 2015
-
-Daftar Buku ke-3
-Judul: Seorang Kristen Pindah Muslim
-Pengarang: Mikhael
-Penerbit: Sinar Dunia
-Tebal Buku: 800 halaman
-Harga Buku: Rp400000
-Tahun Terbit: 2010
-
-Daftar Buku ke-4
-Judul: Perjalanan Menjadi Coach
-Pengarang: Yoka
-Penerbit: Montoon
-Tebal Buku: 76 halaman
-Harga Buku: Rp50000
-Tahun Terbit: 2020
-
-Daftar Buku ke-5
-Judul: Cinta yang Tak Pernah ku Bayangkan
-Pengarang: Fahmi Hidayat
-Penerbit: PLH Entertain
-Tebal Buku: 200 halaman
-Harga Buku: Rp56000
-Tahun Terbit: 2023
+    delete curr;
+}
 ```
 
-#### Penjelasan
+Pada kode di atas, dibuatkan fungsi yang dapat menghapus node dengan nama tertentu dalam linked list.
 
-Pada output di atas, pengguna memasukkan value yang berbeda dari 5 buku. Mulai dari judul, pengarang, penerbit, tebal buku, harga buku, dan tahun terbit. Semua value yang dimasukkan akan keluar seperti output di atas sesuai dengan yang dideklarasikan pada fungsi main.
+#### Bagian 7
+
+```C++
+void ubah(string nama, string newNama, int newUsia) {
+    Node* curr = head;
+
+    while (curr != NULL && curr->nama != nama) {
+        curr = curr->next;
+    }
+
+    if (curr == NULL) {
+        cout << "Data tidak ditemukan" << endl;
+        return;
+    }
+
+    curr->nama = newNama;
+    curr->usia = newUsia;
+}
+```
+
+Pada kode di atas, dibuatkan fungsi yang dapat mengubah data node degan nama tertentu di dalam linked list.
+
+#### Bagian 8
+
+```C++
+void tampilkan() {
+    if (head == NULL) {
+        cout << "List kosong" << endl;
+        return;
+    }
+
+    Node* curr = head;
+
+    while (curr != NULL) {
+        cout << curr->nama << " " << curr->usia << endl;
+        curr = curr->next;
+    }
+}
+```
+
+Pada kode di atas digunakan untuk menampilkan seluruh data di dalam linked list.
+
+#### Bagian 9
+
+```C++
+int main() {
+    // memasukkan data pertama (nama dan usia anda)
+    string namaAnda;
+    int usiaAnda;
+    cout << "Masukkan nama anda: ";
+    cin >> namaAnda;
+    cout << "Masukkan usia anda: ";
+    cin >> usiaAnda;
+    tambahDiAwal(namaAnda, usiaAnda);
+    // memasukkan data lainnya
+tambahDiAkhir("John", 19);
+tambahDiAkhir("Jane", 20);
+tambahDiAkhir("Michael", 18);
+tambahDiAkhir("Yusuke", 19);
+tambahDiAkhir("Akechi", 20);
+tambahDiAkhir("Hoshino", 18);
+tambahDiAkhir("Karin", 18);
+
+// menampilkan semua data
+cout << "Data awal:" << endl;
+tampilkan();
+
+// menghapus data Akechi
+hapus("Akechi");
+cout << endl << "Setelah menghapus Akechi: " << endl;
+tampilkan();
+
+// menambahkan data Futaba di antara Carol dan Ann
+tambahDiTengah("Futaba", 18, 3);
+cout << endl << "Setelah menambahkan Futaba di antara John dan Jane: " << endl;
+tampilkan();
+
+// menambahkan data Igor di awal
+tambahDiAwal("Igor", 20);
+cout << endl << "Setelah menambahkan Igor di awal: " << endl;
+tampilkan();
+
+// mengubah data Carol menjadi Reyn
+ubah("Michael", "Reyn", 18);
+cout << endl << "Setelah mengubah Michael menjadi Reyn: " << endl;
+tampilkan();
+
+// menampilkan semua data setelah perubahan
+cout << endl << "Data setelah perubahan:" << endl;
+tampilkan();
+
+return 0;
+}
+```
+
+Fungsi di atas merupakan fungsi main yang berupa fungsi utama di dalam program yang disebut dengan fungsi main. Pengguna diminta untuk memasukkan nama dan usianya. Pada data di awal dimasukkan ke dalam linked list menggunakan fungsi-fungsi yang telah didefinisikan pada kode-kode di atas.
 
 #### Full code Screenshot:
 
 <p align="center">
-  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-5/blob/main/Modul%205/SS/codeunguided1.png" alt="Alt Text">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/U1.1.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/U1.2.png" alt="Alt Text">
+</p>
+<p align="center">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/U1.3.png" alt="Alt Text">
 </p>
 
 #### Screenshot Output
 
 <p align="center">
-  <img src="" alt="Alt Text">
+  <img src="https://github.com/rizaledc/Praktikum-Struktur-Data-Assigment-Modul-6/blob/main/Modul%206/SekirinSot/OUn1.png" alt="Alt Text">
 </p>
 
-NB : Screenshot terlalu panjang, oleh karena itu screenshot dibagi menjadi dua bagian.
+#### Penjelasan
 
+Dari output di atas kita mengetahui bahwa pengguna dapat memasukkan nama dan umur. Dimana pengguna memasukkan nama Rizal dengan umur 19 maka nama Rizal dan umurnya 19 dimasukkan ke dalam Linked List.
 
 ### 2. Unguided 2
 
